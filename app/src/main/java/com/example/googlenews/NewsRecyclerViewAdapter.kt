@@ -1,11 +1,13 @@
 package com.example.googlenews
 
 import android.view.LayoutInflater
-import androidx.recyclerview.widget.RecyclerView
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.recyclerview.widget.RecyclerView
+import com.example.googlenews.network.News
+import com.squareup.picasso.Picasso
 
 class NewsRecyclerViewAdapter : RecyclerView.Adapter<NewsRecyclerViewAdapter.ViewHolder>() {
 
@@ -20,18 +22,27 @@ class NewsRecyclerViewAdapter : RecyclerView.Adapter<NewsRecyclerViewAdapter.Vie
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind()
+        val item = data[position]
+        holder.bind(item)
     }
 
-    override fun getItemCount() = 25
+    override fun getItemCount() = data.size
 
     class ViewHolder private constructor(view: View) : RecyclerView.ViewHolder(view) {
         val titleText: TextView = view.findViewById(R.id.title_text)
         val newsImage: ImageView = view.findViewById(R.id.news_image)
 
-        fun bind() {  //  val item = data[position]
-            // holder.titleText.text = item.title
-            newsImage.setImageResource(R.drawable.ic_launcher_background)
+        fun bind(news: News) {
+            titleText.text = news.title
+            setImageFromWeb(news)
+        }
+
+        private fun setImageFromWeb(news: News) {
+            Picasso.get()
+                .load(news.imageUrl)
+                .placeholder(R.drawable.ic_baseline_image_24)
+                .error(R.drawable.ic_baseline_broken_image_24)
+                .into(newsImage);
         }
 
         companion object {
@@ -44,6 +55,4 @@ class NewsRecyclerViewAdapter : RecyclerView.Adapter<NewsRecyclerViewAdapter.Vie
             }
         }
     }
-
-
 }

@@ -10,6 +10,11 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import com.example.googlenews.databinding.FragmentNewsListBinding
+import com.example.googlenews.network.NewsRequestResponse
+import com.example.googlenews.network.GoogleNewsApi
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class NewsFragment : Fragment() {
 
@@ -31,11 +36,33 @@ class NewsFragment : Fragment() {
             DataBindingUtil.inflate(inflater, R.layout.fragment_news_list, container, false)
         setNewsAdapter(binding)
 
+        requestNews(binding)
         return binding.root
+    }
+
+    private fun requestNews(binding: FragmentNewsListBinding) {
+        GoogleNewsApi.retrofitService.getTopHeadlines()
+            .enqueue(object : Callback<NewsRequestResponse> {
+                override fun onFailure(call: Call<NewsRequestResponse>, t: Throwable) {
+                    //todo implement error message displaying  response = "Failure: " + t.message
+                }
+
+                override fun onResponse(
+                    call: Call<NewsRequestResponse>,
+                    requestResponse: Response<NewsRequestResponse>
+                ) {
+                    val newsResponse = requestResponse.body() as NewsRequestResponse
+                    val adapter = binding.newsList.adapter as NewsRecyclerViewAdapter
+                    adapter.data = newsResponse.articles
+                    adapter.notifyDataSetChanged()
+
+                }
+            })
     }
 
     private fun setNewsAdapter(binding: FragmentNewsListBinding) {
         val view = binding.root
+
         if (view is RecyclerView) {
             with(view) {
                 layoutManager = when {
@@ -45,7 +72,6 @@ class NewsFragment : Fragment() {
                 val adapter = NewsRecyclerViewAdapter()
 
                 binding.newsList.adapter = adapter
-                adapter.data = listOf<News>()
             }
         }
     }

@@ -16,12 +16,7 @@ private const val TOP_HEADLINES_ENDPOINT = "top-headlines?sources=google-news-br
 
 val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
 
-private val moshi = Moshi.Builder()
-    .add(KotlinJsonAdapterFactory())
-    .build()
-
 private val retrofit = Retrofit.Builder()
-    //.addConverterFactory(MoshiConverterFactory.create(moshi))
     .addConverterFactory(GsonConverterFactory.create(gson))
     .baseUrl(BASE_URL)
     .build()

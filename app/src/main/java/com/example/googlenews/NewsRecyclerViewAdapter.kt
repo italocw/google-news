@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.googlenews.network.News
-import com.squareup.picasso.Picasso
 
 class NewsRecyclerViewAdapter : RecyclerView.Adapter<NewsRecyclerViewAdapter.ViewHolder>() {
 
@@ -38,11 +38,9 @@ class NewsRecyclerViewAdapter : RecyclerView.Adapter<NewsRecyclerViewAdapter.Vie
         }
 
         private fun setImageFromWeb(news: News) {
-            Picasso.get()
-                .load(news.imageUrl)
-                .placeholder(R.drawable.ic_baseline_image_24)
-                .error(R.drawable.ic_baseline_broken_image_24)
-                .into(newsImage);
+            Glide.with(newsImage.context)
+                .load((news.urlToImage))
+                .into(newsImage)
         }
 
         companion object {
